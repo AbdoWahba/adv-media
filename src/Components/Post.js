@@ -75,7 +75,7 @@ export default function Post({
           subheader={date}
         />
         <CardContent>
-          <Typography variant='body2' color='textBlack' component='p'>
+          <Typography variant='body2' component='p'>
             {body}
           </Typography>
         </CardContent>
@@ -85,7 +85,6 @@ export default function Post({
             component='video'
             src={image}
             controls
-            autoPlay
             type='video/mp4'
           />
         ) : image ? (
