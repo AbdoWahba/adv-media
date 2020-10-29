@@ -1,0 +1,9 @@
+.post {
+    display: flex;
+    justify-content: center;
+
+}
+
+.MuiCardHeader-content>span.MuiCardHeader-title {
+    font-weight: 900;
+}
