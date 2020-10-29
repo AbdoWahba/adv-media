@@ -1,0 +1,29 @@
+.MuiButton-containedPrimary {
+    background-color: #2e81f4;
+    width: 50%;
+}
+
+.signin__logo>img {
+    width: 30%
+}
+
+.signin__title {
+    margin-bottom: 5rem;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    color: #2e81f4;
+}
+
+
+
+.signin__logo {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.signin__button {
+    display: flex;
+    justify-content: center;
+}
