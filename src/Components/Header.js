@@ -7,7 +7,19 @@ import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
 
 import { Avatar } from '@material-ui/core';
 
-function Header({ currentRoute }) {
+import { useLocation, useHistory } from 'react-router-dom';
+
+function Header() {
+  const history = useHistory();
+  const location = useLocation();
+  console.log(location);
+  const currentRoute = location.pathname;
+
+  const handleRoute = (route) => {
+    history.push(route);
+  };
+
+  if (currentRoute.includes('/signin')) return <div></div>;
   return (
     <div className='header'>
       <div className='header__left'>
@@ -18,11 +30,23 @@ function Header({ currentRoute }) {
         <h3 className='header__title'>Ads Media</h3>
       </div>
       <div className='header__center'>
-        <div className='header__option header__option--active'>
+        <div
+          onClick={() => handleRoute('/')}
+          className={
+            currentRoute === '/'
+              ? 'header__option header__option--active'
+              : 'header__option'
+          }>
           <HomeIcon fontSize='large' />
           <p>Home</p>
         </div>
-        <div className='header__option'>
+        <div
+          onClick={() => handleRoute('/create')}
+          className={
+            currentRoute.includes('/create')
+              ? 'header__option header__option--active'
+              : 'header__option'
+          }>
           <AddToPhotosIcon fontSize='large' />
           <p>Create Post</p>
         </div>
