@@ -28,8 +28,8 @@ function Header({ currentRoute }) {
         </div>
       </div>
       <div className='header__right'>
-        <Avatar src='https://icon-library.com/images/ads-icon/ads-icon-21.jpg' />
-        <h5>Abdo Wahba</h5>
+        <Avatar />
+        <h5 className='header__user'>Abdo Wahba</h5>
       </div>
     </div>
   );
