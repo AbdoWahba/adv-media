@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
+import db from '../firbase';
+import firebase from 'firebase';
+import { useLocation, useHistory } from 'react-router-dom';
 import { useStateValue } from '../store/Provider';
 import { storage } from '../firbase';
 import {
@@ -66,6 +68,8 @@ const useStyles = makeStyles((theme) => ({
 function CreatePost() {
   const [body, setBody] = useState('');
   const [canPost, setCanPost] = useState(false);
+  const [imageReady, setImageReady] = useState(false);
+  const history = useHistory();
 
   const [tag, setTag] = useState('');
   const [tagsList, setTagsList] = useState([]);
@@ -109,6 +113,8 @@ function CreatePost() {
           .child(imageAsFile.name)
           .getDownloadURL()
           .then((fireBaseUrl) => {
+            console.log('FFFIIINNNIIISH');
+            setImageReady(true);
             setImageAsUrl((prevObject) => ({
               ...prevObject,
               imgUrl: fireBaseUrl,
@@ -130,6 +136,7 @@ function CreatePost() {
   console.log(imageAsFile);
   console.log(imageAsUrl);
   const handleImageAsFile = (e) => {
+    setImageReady(false);
     const image = e.target.files[0];
     setImageAsFile((imageFile) => image);
     setImageType((imageType) =>
@@ -142,10 +149,14 @@ function CreatePost() {
     }
   }, [imageAsFile]);
   useEffect(() => {
-    if (tagsList.length == 0 && (body || imageAsUrl)) {
-      setCanPost(false);
-    } else {
+    console.log(imageAsUrl.imgUrl, imageReady);
+    if (
+      (tagsList.length !== 0 && body && imageAsFile == '') ||
+      (tagsList.length !== 0 && imageAsUrl.imgUrl && imageReady)
+    ) {
       setCanPost(true);
+    } else {
+      setCanPost(false);
     }
   });
   const removeTag = () => {
@@ -160,7 +171,20 @@ function CreatePost() {
     }
   };
 
-  const post = () => {};
+  const post = () => {
+    db.collection('posts').add({
+      auther: user.displayName ? user.displayName : '',
+      avatar: user.photoURL ? user.photoURL : '',
+      body: body,
+      date: firebase.firestore.FieldValue.serverTimestamp(),
+      image: imageAsUrl.imgUrl ? imageAsUrl.imgUrl : '',
+      imgType: imageType ? imageType : '',
+      tags: tagsList ? tagsList : [],
+    });
+    setTimeout(() => {
+      history.push('/');
+    }, 2000);
+  };
   return (
     <div className='create'>
       <Card className={matches ? classes.root : classes.smallRoot}>
@@ -172,7 +196,9 @@ function CreatePost() {
           <TextField
             id='filled-full-width'
             style={{ margin: 8 }}
-            placeholder={`What is on your mind, ${user.displayName}?`}
+            placeholder={
+              user ? `What is on your mind, ${user.displayName}?` : ''
+            }
             fullWidth
             margin='normal'
             multiline
@@ -236,7 +262,8 @@ function CreatePost() {
               variant='contained'
               color='primary'
               onClick={post}
-              disabled={!canPost}>
+              disabled={!canPost}
+              onClick={post}>
               POST
             </Button>
           </div>
