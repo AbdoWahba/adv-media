@@ -200,7 +200,7 @@ function Feed() {
               date={timeConverter(date.toMillis())}
               imageType={imgType}
               image={image}
-              avatarSrc={}
+              avatarSrc={''}
               tags={tags}
             />
           );
