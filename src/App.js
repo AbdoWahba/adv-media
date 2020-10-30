@@ -1,22 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import Header from './Components/Header';
 import Feed from './Components/Feed';
-import { Route, Switch, BrowserRouter } from 'react-router-dom';
+import { Route, BrowserRouter } from 'react-router-dom';
 import CreatePost from './Components/CreatePost';
 import SignIn from './Components/SignIn';
-
+import { useStateValue } from './store/Provider';
+import { actionTypes } from './store/reducers';
+import db from './firbase';
 function App() {
+  const [state, dispatch] = useStateValue();
+  useEffect(() => {
+    db.collection('posts').onSnapshot((snapshot) => {
+      dispatch({
+        type: actionTypes.FETCH_POSTS,
+        posts: snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() })),
+      });
+    });
+  }, []);
   return (
     <BrowserRouter>
-      <Switch>
-        <div className='App'>
-          <Header />
-          <Route exact path='/' component={Feed} />
-          <Route path='/create' component={CreatePost} />
-          <Route path='/signin' component={SignIn} />
-        </div>
-      </Switch>
+      <div className='App'>
+        <Header />
+        <Route exact path='/' component={Feed} />
+        <Route path='/create' component={CreatePost} />
+        <Route path='/signin' component={SignIn} />
+      </div>
     </BrowserRouter>
   );
 }
