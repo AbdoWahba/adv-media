@@ -1,10 +1,54 @@
 import React from 'react';
 import Post from './Post';
 import Video from './vid.mp4';
-
+import { useStateValue } from '../store/Provider';
 function Feed() {
+  const [{ posts }, dispacher] = useStateValue();
+  const timeConverter = (UNIX_timestamp) => {
+    var a = new Date(UNIX_timestamp);
+    var months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var sec = a.getSeconds();
+    var time =
+      date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
+    return time;
+  };
+
   return (
     <div>
+      {posts.map(({ id, data }) => {
+        const { body, tags, image, avatar, auther, date, imgType } = data;
+        console.log(avatar);
+        return (
+          <Post
+            key={id}
+            auther={auther}
+            body={body}
+            date={timeConverter(date.toMillis())}
+            imageType={imgType}
+            image={image}
+            avatarSrc={avatar}
+            tags={tags}
+          />
+        );
+      })}
       <Post
         key='1'
         auther='Abdo Wahba'
