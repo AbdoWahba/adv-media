@@ -57,7 +57,9 @@ export default function Post({
   image,
   imageType,
   avatarSrc,
+  tags,
 }) {
+  console.log(avatarSrc);
   const classes = useStyles();
   const matches = useMediaQuery('(min-width:600px)');
 
@@ -65,7 +67,12 @@ export default function Post({
     <div className='post'>
       <Card className={matches ? classes.root : classes.smallRoot}>
         <CardHeader
-          avatar={<Avatar src={avatarSrc} />}
+          avatar={
+            <Avatar
+              src={avatarSrc ? JSON.parse(avatarSrc) : './momo'}
+              alt={auther}
+            />
+          }
           action={
             <IconButton aria-label='settings'>
               <MoreVertIcon />
@@ -92,6 +99,19 @@ export default function Post({
         ) : (
           ''
         )}
+        <CardContent>
+          <h3 style={{ margin: '.25rem' }}>TAGS</h3>
+          <hr />
+          <div className='tag__container--post'>
+            {tags
+              ? tags.map((el) => (
+                  <div className='tag--post' key={el}>
+                    {el}
+                  </div>
+                ))
+              : ''}
+          </div>
+        </CardContent>
       </Card>
     </div>
   );
