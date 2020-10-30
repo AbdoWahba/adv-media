@@ -8,12 +8,20 @@ import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
 import { Avatar } from '@material-ui/core';
 
 import { useLocation, useHistory } from 'react-router-dom';
+import { useStateValue } from '../store/Provider';
 
 function Header() {
+  const [{ user }, dispatch] = useStateValue();
+
   const history = useHistory();
   const location = useLocation();
-  console.log(location);
+  console.log(user);
   const currentRoute = location.pathname;
+  if (!user && !currentRoute.includes('/signin')) {
+    history.push('/signin');
+  } else if (user && currentRoute.includes('/signin')) {
+    history.push('/');
+  }
 
   const handleRoute = (route) => {
     history.push(route);
@@ -52,8 +60,8 @@ function Header() {
         </div>
       </div>
       <div className='header__right'>
-        <Avatar />
-        <h5 className='header__user'>Abdo Wahba</h5>
+        <Avatar src={user ? user.photoURL : ''} />
+        <h5 className='header__user'>{user ? user.displayName : ''}</h5>
       </div>
     </div>
   );
