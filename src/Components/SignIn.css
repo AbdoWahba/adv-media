@@ -1,4 +1,4 @@
-.MuiButton-containedPrimary {
+.signin__button>.MuiButton-containedPrimary {
     background-color: #2e81f4;
     width: 50%;
 }
