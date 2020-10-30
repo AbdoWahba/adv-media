@@ -65,6 +65,8 @@ const useStyles = makeStyles((theme) => ({
 
 function CreatePost() {
   const [body, setBody] = useState('');
+  const [canPost, setCanPost] = useState(false);
+
   const [tag, setTag] = useState('');
   const [tagsList, setTagsList] = useState([]);
   const allInputs = { imgUrl: '' };
@@ -139,6 +141,13 @@ function CreatePost() {
       handleFireBaseUpload();
     }
   }, [imageAsFile]);
+  useEffect(() => {
+    if (tagsList.length == 0 && (body || imageAsUrl)) {
+      setCanPost(false);
+    } else {
+      setCanPost(true);
+    }
+  });
   const removeTag = () => {
     const newTags = [...tagsList];
     newTags.splice(-1, 1);
@@ -223,7 +232,11 @@ function CreatePost() {
                 </Button>
               </label>
             </div>
-            <Button variant='contained' color='primary' onClick={post}>
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={post}
+              disabled={!canPost}>
               POST
             </Button>
           </div>
