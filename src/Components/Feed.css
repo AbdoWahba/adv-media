@@ -1,0 +1,14 @@
+.tag__container--feed {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.tag--feed {
+  background-color: #2e81f4;
+  border-radius: 3rem;
+  height: 3rem;
+  padding: 1rem;
+  margin: 0.5rem;
+}

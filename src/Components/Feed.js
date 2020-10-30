@@ -1,9 +1,86 @@
-import React from 'react';
+import React, { useState } from 'react';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Avatar,
+  TextField,
+  Paper,
+  InputBase,
+  Divider,
+  IconButton,
+  Button,
+} from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
+
 import Post from './Post';
 import Video from './vid.mp4';
+import './Feed.css';
 import { useStateValue } from '../store/Provider';
+import { makeStyles } from '@material-ui/core/styles';
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '60%',
+    padding: '1rem 0rem',
+    margin: '.5rem 0rem',
+    borderRadius: '2rem',
+  },
+
+  smallRoot: {
+    width: '95%',
+    padding: '1rem 0rem',
+    margin: '1rem 0rem',
+    borderRadius: '1rem',
+  },
+  tagsRoot: {
+    padding: '2px 4px',
+    display: 'flex',
+    alignItems: 'center',
+    margin: 'auto',
+    marginTop: '2rem',
+    width: '50%',
+  },
+  tagsRootSmall: {
+    padding: '2px 4px',
+    display: 'flex',
+    alignItems: 'center',
+    margin: 'auto',
+    marginTop: '2rem',
+    width: '80%',
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
+  divider: {
+    height: 28,
+    margin: 4,
+  },
+  upload: {
+    '& > *': {
+      margin: theme.spacing(1),
+    },
+  },
+  inputFile: {
+    display: 'none',
+  },
+}));
+
 function Feed() {
+  const classes = useStyles();
+
   const [{ posts }, dispacher] = useStateValue();
+  const [postsList, setPostsList] = useState(posts);
+  const [tag, setTag] = useState('');
+  const [tagsList, setTagsList] = useState([]);
+  const matches = useMediaQuery('(min-width:600px)');
+
   const timeConverter = (UNIX_timestamp) => {
     var a = new Date(UNIX_timestamp);
     var months = [
@@ -30,25 +107,104 @@ function Feed() {
       date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
     return time;
   };
+  const handleTagChange = (e) => {
+    setTag(e.target.value);
+  };
 
+  const removeTag = () => {
+    const newTags = [...tagsList];
+    newTags.splice(-1, 1);
+    setTagsList(newTags);
+  };
+
+  const addTag = () => {
+    if (tag && tag.length >= 3) {
+      setTagsList([...tagsList, tag]);
+      setTag('');
+    }
+  };
+  const handleKeyDown = (e) => {
+    if (e.keyCode == 13) {
+      addTag();
+    }
+  };
+  console.log(tagsList);
+  const findCommonElement = (array1, array2) => {
+    // Loop for array1
+    for (let i = 0; i < array1.length; i++) {
+      // Loop for array2
+      for (let j = 0; j < array2.length; j++) {
+        // Compare the element of each and
+        // every element from both of the
+        // arrays
+        if (array1[i] === array2[j]) {
+          // Return if common element found
+          return true;
+        }
+      }
+    }
+
+    // Return if no common element exist
+    return false;
+  };
   return (
     <div>
-      {posts.map(({ id, data }) => {
-        const { body, tags, image, avatar, auther, date, imgType } = data;
-        console.log(avatar);
-        return (
-          <Post
-            key={id}
-            auther={auther}
-            body={body}
-            date={timeConverter(date.toMillis())}
-            imageType={imgType}
-            image={image}
-            avatarSrc={avatar}
-            tags={tags}
-          />
-        );
-      })}
+      <Paper
+        component='div'
+        className={matches ? classes.tagsRoot : classes.tagsRootSmall}>
+        <InputBase
+          className={classes.input}
+          placeholder='Filter By Tags'
+          //   inputProps={{ 'aria-label': 'search google maps' }}
+          //   variant='filled'
+          value={tag}
+          onChange={handleTagChange}
+          onKeyDown={handleKeyDown}
+        />
+        <Divider className={classes.divider} orientation='vertical' />
+        <IconButton
+          color='primary'
+          className={classes.iconButton}
+          aria-label='add'
+          onClick={addTag}>
+          <AddIcon />
+        </IconButton>
+        <Divider className={classes.divider} orientation='vertical' />
+        <IconButton
+          color='secondary'
+          className={classes.iconButton}
+          aria-label='add'
+          onClick={removeTag}>
+          <CancelPresentationIcon />
+        </IconButton>
+      </Paper>
+      <div className='tag__container--feed'>
+        {tagsList.map((el) => (
+          <div className='tag--feed' key={el}>
+            {el}
+          </div>
+        ))}
+      </div>
+      {posts
+        .filter(({ data }) => {
+          return tagsList.length == 0 || findCommonElement(tagsList, data.tags);
+        })
+        .map(({ id, data }) => {
+          const { body, tags, image, avatar, auther, date, imgType } = data;
+          console.log(avatar);
+          return (
+            <Post
+              key={id}
+              auther={auther}
+              body={body}
+              date={timeConverter(date.toMillis())}
+              imageType={imgType}
+              image={image}
+              avatarSrc={avatar}
+              tags={tags}
+            />
+          );
+        })}
       <Post
         key='1'
         auther='Abdo Wahba'
