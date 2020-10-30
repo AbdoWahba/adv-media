@@ -11,12 +11,14 @@ import db from './firbase';
 function App() {
   const [state, dispatch] = useStateValue();
   useEffect(() => {
-    db.collection('posts').onSnapshot((snapshot) => {
-      dispatch({
-        type: actionTypes.FETCH_POSTS,
-        posts: snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() })),
+    db.collection('posts')
+      .orderBy('date', 'desc')
+      .onSnapshot((snapshot) => {
+        dispatch({
+          type: actionTypes.FETCH_POSTS,
+          posts: snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() })),
+        });
       });
-    });
   }, []);
   return (
     <BrowserRouter>
